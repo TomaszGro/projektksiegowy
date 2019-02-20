@@ -9,13 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.tomaszgronski.projektksiegowy.invoice.model.Company;
 import pl.tomaszgronski.projektksiegowy.invoice.model.Invoice;
-import pl.tomaszgronski.projektksiegowy.invoice.model.InvoiceEntry;
 import pl.tomaszgronski.projektksiegowy.invoice.service.InvoiceBook;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,20 +36,8 @@ public class InvoiceControllerMVCServiceMockTest {
 
     public void findInvoiceTest() {
 
-        Invoice invoice = new Invoice();
-        invoice.setDate(ZonedDateTime.now());
-        Company company = new Company();
-        company.setCompanyName("firma1");
-        invoice.setFromCompany(company);
+        Invoice invoice = TestHelper.testInvoiceToSave("firma15", "3559196448", "firma4", "1247590186");
         invoice.setId(123l);
-        List<InvoiceEntry> invoiceEntries = new ArrayList<>();
-        InvoiceEntry invoiceEntry = new InvoiceEntry();
-        invoiceEntry.setValueprice(new BigDecimal("100.99"));
-        invoiceEntry.setDescription("Cena");
-        invoiceEntries.add(invoiceEntry);
-        invoice.setInvoiceEntries(invoiceEntries);
-
-
         Mockito.when(invoiceBook.findInvoice(123l)).thenReturn(Optional.of(invoice));
         try {
             this.mockMvc.perform(get("/invoice/123")).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(123l));
@@ -72,18 +56,7 @@ public class InvoiceControllerMVCServiceMockTest {
         List<Invoice> invoices = new ArrayList<>();
 
         for (long i = 1; i < 6; i++) {
-            Invoice invoice = new Invoice();
-            invoice.setDate(ZonedDateTime.now());
-            Company company = new Company();
-            company.setCompanyName("firma" + i);
-            invoice.setFromCompany(company);
-            invoice.setId(i);
-            List<InvoiceEntry> invoiceEntries = new ArrayList<>();
-            InvoiceEntry invoiceEntry = new InvoiceEntry();
-            invoiceEntry.setValueprice(new BigDecimal("100" + i));
-            invoiceEntry.setDescription("Cena");
-            invoiceEntries.add(invoiceEntry);
-            invoice.setInvoiceEntries(invoiceEntries);
+            Invoice invoice = TestHelper.testInvoiceToSave("firma20" + i, "1258673964", "firma4", "1247590186");
             invoices.add(invoice);
         }
 

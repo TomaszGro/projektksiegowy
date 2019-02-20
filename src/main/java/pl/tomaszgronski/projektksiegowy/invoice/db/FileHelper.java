@@ -1,6 +1,8 @@
 package pl.tomaszgronski.projektksiegowy.invoice.db;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -24,6 +27,8 @@ public class FileHelper {
     public List<Invoice> getAllDataFromFile() {
         LOGGER.info("Get all invoices");
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
         List<Invoice> invoices = new ArrayList<>();
         File file = new File(filePath);
         try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
@@ -40,7 +45,19 @@ public class FileHelper {
 
     public void saveInvoice(Invoice invoice) throws IOException {
         LOGGER.info("Save invoice");
+        if (invoice.getId() == null) {
+            Invoice invoice1 = getAllDataFromFile().stream().max(Comparator.comparingLong(Invoice::getId)).orElse(new Invoice());
+            Long maxId = invoice1.getId();
+            if (maxId == null) {
+                maxId = 1l;
+            } else {
+                maxId = maxId + 1l;
+            }
+            invoice.setId(maxId);
+        }
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
         File file = new File(filePath);
         try (FileWriter fw = new FileWriter(file, true);
              BufferedWriter bw = new BufferedWriter(fw)) {
@@ -56,6 +73,8 @@ public class FileHelper {
     public void updateInvoice(Invoice invoice) throws IOException {
         LOGGER.info("Update invoice");
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
         File file = new File(filePath);
         File filetemp = new File("temp.txt");
         try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr);
@@ -89,6 +108,8 @@ public class FileHelper {
         boolean successDelete = false;
         LOGGER.info("Delete invoice");
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
         File file = new File(filePath);
         File filetemp = new File("temp.txt");
         try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr);

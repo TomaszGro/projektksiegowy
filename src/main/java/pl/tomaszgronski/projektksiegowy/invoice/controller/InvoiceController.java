@@ -37,7 +37,9 @@ public class InvoiceController {
     public Invoice saveInvoice(@RequestBody Invoice invoice) {
 
         LOGGER.info("saveInvoice");
-        if (invoice.getFromCompany() == null || invoice.getFromCompany().getTaxIndetificationNumber() == null || ValidatorExternal.isValidNip(invoice.getFromCompany().getTaxIndetificationNumber()) == false) {
+        if (invoice.getFromCompany() == null || invoice.getFromCompany().getTaxIndetificationNumber() == null
+                || ValidatorExternal.isValidNip(invoice.getFromCompany().getTaxIndetificationNumber()) == false) {
+            LOGGER.info("saveInvoice()" + ValidatorExternal.isValidNip(invoice.getFromCompany().getTaxIndetificationNumber()));
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient data for Company");
         }
         LOGGER.info("invoice add:" + invoice.toString());
@@ -50,6 +52,9 @@ public class InvoiceController {
         }
         try {
             invoiceBook.saveInvoice(invoice);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(invoice.toString(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient data for invoice");
         } catch (IOException e) {
             LOGGER.error(invoice.toString(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error please contact support department");
