@@ -2,6 +2,7 @@ package pl.tomaszgronski.projektksiegowy.invoice.db;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import pl.tomaszgronski.projektksiegowy.invoice.model.Invoice;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+@Primary
 @Repository
 public class InFileDatabase implements Database {
 

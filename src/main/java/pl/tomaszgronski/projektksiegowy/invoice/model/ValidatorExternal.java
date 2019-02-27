@@ -10,7 +10,7 @@ public class ValidatorExternal {
         }
         int[] weights = {6, 5, 7, 2, 3, 4, 5, 6, 7};
         int j = 0, sum = 0, control = 0;
-        int csum = new Integer(nip.substring(nsize - 1)).intValue();
+        int csum = new Integer(nip.substring(nsize - 1));
         if (csum == 0) {
             csum = 10;
         }

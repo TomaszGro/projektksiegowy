@@ -1,5 +1,6 @@
 package pl.tomaszgronski.projektksiegowy.invoice.db;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import pl.tomaszgronski.projektksiegowy.invoice.model.Invoice;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-
+@Qualifier("in-memory")
 public class InMemoryDatabase implements Database {
 
     private Map<Long, Invoice> map = new HashMap<>();
